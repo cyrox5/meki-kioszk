@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rendelő kioszk</title>
+<style>
+  
+:root{--red:#db0007;--yel:#ffbc0d;--bg:#f5f1ea;--card:#fff;--ink:#292929;--mut:#6f6f6f;--line:#e4ded3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1b19;--card:#2a2926;--ink:#f3f0ea;--mut:#a9a49a;--line:#3d3a35}}
+:root[data-theme="dark"]{--bg:#1c1b19;--card:#2a2926;--ink:#f3f0ea;--mut:#a9a49a;--line:#3d3a35}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Helvetica Neue",Arial,sans-serif}
+#app{max-width:560px;height:100%;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);position:relative;overflow:hidden}
+button{font:inherit;cursor:pointer;border:0;color:inherit;background:none}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.on{display:flex}
+/* welcome */
+#welcome{background:var(--red);color:#fff;text-align:center;justify-content:center;align-items:center;padding:24px;gap:18px}
+#welcome .big{font-size:84px;line-height:1}
+#welcome h1{font-size:34px;font-weight:800}
+#welcome p{opacity:.9}
+.opts{display:flex;gap:14px;width:100%;margin-top:18px}
+.opt{flex:1;background:#fff;color:var(--ink);border-radius:20px;padding:26px 8px;font-weight:800;font-size:20px;box-shadow:0 6px 0 rgba(0,0,0,.25)}
+.opt span{display:block;font-size:52px;margin-bottom:8px}
+.opt:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+/* menu */
+header{background:var(--red);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:18px}
+header button{background:var(--yel);color:#292929;border-radius:99px;padding:6px 14px;font-weight:700;font-size:14px}
+.body{flex:1;display:flex;min-height:0}
+nav{width:92px;background:var(--card);overflow-y:auto;border-right:1px solid var(--line)}
+nav button{width:100%;padding:14px 4px;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;border-left:5px solid transparent;color:var(--mut)}
+nav button span{font-size:30px}
+nav button.on{border-left-color:var(--red);background:var(--bg);color:var(--ink)}
+main{flex:1;overflow-y:auto;padding:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-content:start}
+.item{background:var(--card);border-radius:16px;padding:12px 8px;text-align:center;border:2px solid transparent;position:relative;display:flex;flex-direction:column;gap:4px}
+.item:active{border-color:var(--yel)}
+.item .e{font-size:54px}
+.item b{font-size:14px}
+.item small{color:var(--mut);font-size:12px}
+.item .p{font-weight:800;color:var(--red)}
+.item .q{position:absolute;top:6px;right:6px;background:var(--red);color:#fff;border-radius:99px;min-width:24px;height:24px;font-size:13px;font-weight:700;display:grid;place-items:center}
+footer{background:var(--card);border-top:1px solid var(--line);padding:12px 14px;display:flex;align-items:center;gap:12px}
+footer .tot{flex:1;font-size:13px;color:var(--mut)}
+footer .tot b{display:block;font-size:22px;color:var(--ink)}
+.cta{background:var(--yel);color:#292929;font-weight:800;border-radius:14px;padding:16px 22px;font-size:17px;box-shadow:0 4px 0 #c99200}
+.cta:disabled{opacity:.4}
+.cta:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 #c99200}
+.ghost{background:var(--bg);border-radius:14px;padding:16px 18px;font-weight:700}
+/* cart */
+#cartlist{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.row{background:var(--card);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.row .e{font-size:32px}.row .n{flex:1;font-weight:700;font-size:15px}.row .n small{display:block;color:var(--mut);font-weight:400}
+.step{display:flex;align-items:center;gap:8px}
+.step button{width:34px;height:34px;border-radius:50%;background:var(--bg);font-size:20px;font-weight:700}
+.empty{text-align:center;color:var(--mut);padding:50px 0}
+/* done */
+#done{align-items:center;justify-content:center;text-align:center;padding:24px;gap:12px;background:var(--yel);color:#292929}
+#done .num{font-size:110px;font-weight:900;color:var(--red);line-height:1}
+#done .e{font-size:60px}
+</style>
+</head>
+<body>
+<div id="app">
+
+<section class="screen on" id="welcome">
+  <div class="big">🍔</div>
+  <h1>Üdv! Rendelj itt</h1>
+  <p>Érintsd meg a választáshoz</p>
+  <div class="opts">
+    <button class="opt" data-mode="Helyben fogyasztom"><span>🍽️</span>Itt eszem</button>
+    <button class="opt" data-mode="Elvitelre"><span>🛍️</span>Elvitelre</button>
+  </div>
+</section>
+
+<section class="screen" id="menu">
+  <header><span id="modeLbl">Menü</span><button id="cancel">Mégse</button></header>
+  <div class="body"><nav id="nav"></nav><main id="grid"></main></div>
+  <footer>
+    <div class="tot">Összesen<b id="tot">0 Ft</b></div>
+    <button class="cta" id="toCart" disabled>Kosár (0)</button>
+  </footer>
+</section>
+
+<section class="screen" id="cart">
+  <header><span>Rendelésed</span></header>
+  <div id="cartlist"></div>
+  <footer>
+    <button class="ghost" id="back">← Vissza</button>
+    <div class="tot"><b id="tot2">0 Ft</b></div>
+    <button class="cta" id="pay">Fizetés 💳</button>
+  </footer>
+</section>
+
+<section class="screen" id="done">
+  <div class="e">✅</div>
+  <h2>Köszönjük a rendelést!</h2>
+  <p>A rendelésszámod</p>
+  <div class="num" id="num">101</div>
+  <p>Kérjük, figyeld a kijelzőt!</p>
+  <button class="cta" id="again" style="margin-top:20px">Új rendelés</button>
+</section>
+
+</div>
+<script>
+const MENU=[
+{c:"Menük",e:"🍟",i:[["Dupla húsos menü","🍔","Hamburger, közepes sült, üdítő",3190],["Csirke menü","🍗","Ropogós csirke, közepes sült, üdítő",2890],["Sajtburger menü","🧀","Sajtburger, közepes sült, üdítő",2490],["Halburger menü","🐟","Halburger, közepes sült, üdítő",2690]]},
+{c:"Burgerek",e:"🍔",i:[["Dupla húsos","🍔","Két húspogácsa, szósz, saláta",2190],["Sajtburger","🧀","Klasszikus, olvadt sajttal",890],["Csirkeburger","🐔","Ropogós bundában",1490],["Vega burger","🥬","Növényi pogácsa",1690]]},
+{c:"Csirke",e:"🍗",i:[["Nuggets 6 db","🍗","Szósszal",1390],["Nuggets 9 db","🍗","Szósszal",1890],["Csirkeszárny 4 db","🔥","Csípős bundában",1690],["Wrap","🌯","Csirke, saláta, szósz",1590]]},
+{c:"Köretek",e:"🍟",i:[["Sült krumpli (K)","🍟","Közepes",790],["Sült krumpli (N)","🍟","Nagy",990],["Salátatál","🥗","Friss zöldségek",1190],["Almaszeletek","🍎","Csomagolva",590]]},
+{c:"Italok",e:"🥤",i:[["Cola","🥤","0,4 l",650],["Narancslé","🧃","0,3 l",690],["Víz","💧","0,5 l",490],["Kávé","☕","Frissen főzve",590],["Turmix","🥛","Eper",990]]},
+{c:"Desszert",e:"🍦",i:[["Fagylalt","🍦","Vanília, öntettel",790],["Fánk","🍩","Cukormázas",590],["Muffin","🧁","Csokis",690],["Pite","🥧","Almás, ropogós",690]]}
+];
+const $=s=>document.querySelector(s);
+const cart={};let cat=0,mode="",order=100;
+const fmt=n=>n.toLocaleString("hu-HU")+" Ft";
+const show=id=>{document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id))};
+const key=(c,i)=>c+"-"+i;
+function totals(){let n=0,t=0;for(const k in cart){const[c,i]=k.split("-");n+=cart[k];t+=cart[k]*MENU[c].i[i][3]}return{n,t}}
+function nav(){$("#nav").innerHTML=MENU.map((m,i)=>`<button class="${i==cat?"on":""}" data-c="${i}"><span>${m.e}</span>${m.c}</button>`).join("")}
+function grid(){$("#grid").innerHTML=MENU[cat].i.map((p,i)=>{const q=cart[key(cat,i)]||0;return`<button class="item" data-i="${i}">${q?`<div class="q">${q}</div>`:""}<div class="e">${p[1]}</div><b>${p[0]}</b><small>${p[2]}</small><div class="p">${fmt(p[3])}</div></button>`}).join("")}
+function foot(){const{n,t}=totals();$("#tot").textContent=fmt(t);$("#tot2").textContent=fmt(t);$("#toCart").textContent=`Kosár (${n})`;$("#toCart").disabled=!n;$("#pay").disabled=!n}
+function list(){const ks=Object.keys(cart);$("#cartlist").innerHTML=ks.length?ks.map(k=>{const[c,i]=k.split("-");const p=MENU[c].i[i];return`<div class="row"><div class="e">${p[1]}</div><div class="n">${p[0]}<small>${fmt(p[3]*cart[k])}</small></div><div class="step"><button data-k="${k}" data-d="-1">−</button><b>${cart[k]}</b><button data-k="${k}" data-d="1">+</button></div></div>`}).join(""):`<div class="empty">A kosár üres</div>`;foot()}
+document.addEventListener("click",e=>{
+ const t=e.target.closest("button");if(!t)return;
+ if(t.dataset.mode){mode=t.dataset.mode;$("#modeLbl").textContent=mode;nav();grid();foot();show("menu")}
+ else if(t.dataset.c!==undefined){cat=+t.dataset.c;nav();grid();$("#grid").scrollTop=0}
+ else if(t.classList.contains("item")){const k=key(cat,t.dataset.i);cart[k]=(cart[k]||0)+1;grid();foot()}
+ else if(t.dataset.k){cart[t.dataset.k]+=+t.dataset.d;if(cart[t.dataset.k]<=0)delete cart[t.dataset.k];list()}
+ else if(t.id==="toCart"){list();show("cart")}
+ else if(t.id==="back"){grid();foot();show("menu")}
+ else if(t.id==="cancel"||t.id==="again"){for(const k in cart)delete cart[k];show("welcome")}
+ else if(t.id==="pay"&&totals().n){order++;$("#num").textContent=order;for(const k in cart)delete cart[k];show("done")}
+});
+</script>
+</body>
+</html>
