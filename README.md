@@ -1,5 +1,6 @@
 # meki-kioszk
-Név: gasszopo fecik 
+Név: Faze
+
 Tagok: Nyevrikel Armand, Szalai Bálint Ádám, Nagy László Milán 
 
 Szalai Bálint: Javascript
